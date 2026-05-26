@@ -1,3 +1,5 @@
+import { getImageUrl } from './lib/storage'
+
 import { useEffect, useState } from 'react'
 
 import { supabase } from './lib/supabase'
@@ -88,7 +90,14 @@ function App() {
             <Popup>
               <h3>{placa.codigo}</h3>
               <p>{placa.endereco}</p>
-              <img src={placa.foto} width="200" />
+              <img
+ 		 src={getImageUrl(placa.foto)}
+		 width="200"
+		 onError={(e) => {
+		 e.target.src =
+		   'https://placehold.co/200x120?text=Sem+Imagem'
+  	         }}
+/>
             </Popup>
           </Marker>
         ))}
