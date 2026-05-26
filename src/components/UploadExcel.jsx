@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx'
 import { supabase } from '../lib/supabase'
 
-function UploadExcel({ onUpload }) {
+function UploadExcel({ onUpload, projetoId }) {
 
   async function handleFile(event) {
 
@@ -18,12 +18,16 @@ function UploadExcel({ onUpload }) {
     ]
 
     const rows = XLSX.utils.sheet_to_json(sheet)
+	const rowsComProjeto = rows.map((row) => ({
+	  ...row,
+	  projeto_id: projetoId
+	}))
 
     console.log(rows)
 
     const { error } = await supabase
       .from('placas')
-      .insert(rows)
+      .insert(rowsComProjeto)
 
     if (error) {
       console.log(error)

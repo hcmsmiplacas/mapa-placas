@@ -1,3 +1,5 @@
+import ProjectSelector from './components/ProjectSelector'
+
 import { getImageUrl } from './lib/storage'
 
 import { useEffect, useState } from 'react'
@@ -20,6 +22,7 @@ function App() {
 
   const [session, setSession] = useState(null)
   const [placas, setPlacas] = useState([])
+  const [projetoId, setProjetoId] = useState(1)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -38,13 +41,14 @@ function App() {
     const { data } = await supabase
       .from('placas')
       .select('*')
+      .eq('projeto_id',projetoId)
 
     setPlacas(data || [])
   }
 
-  useEffect(() => {
-    if (session) carregarPlacas()
-  }, [session])
+useEffect(() => {
+  if (session) carregarPlacas()
+}, [session, projetoId])
 
   async function logout() {
     await supabase.auth.signOut()
@@ -69,7 +73,15 @@ function App() {
         Sair
       </button>
 
-      <UploadExcel onUpload={carregarPlacas} />
+	<ProjectSelector
+  	value={projetoId}
+  	onChange={setProjetoId}
+/>
+
+      <UploadExcel
+  	onUpload={carregarPlacas}
+  	projetoId={projetoId}
+/>
 
       <MapContainer
         center={[-25.3058, -49.0554]}
